@@ -19,6 +19,7 @@
 <script>
 import ResourceItem from './ResourceItem'
 import TravelerItem from './TravelerItem'
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
   name: 'TravelForm',
@@ -27,35 +28,20 @@ export default {
     TravelerItem
   },
 
-  data () {
-    return {
-      trip: {
-        name: 'New',
-        total: 0,
-        individual: 0,
-        resources: [{name: '', price: 0}],
-        travelers: [{name: ''}]
-      }
-    }
+  computed: {
+    ...mapGetters({
+      trip: 'getTrip'
+    })
   },
 
   methods: {
-    addResource: function () {
-      this.trip.resources.push({name: '', price: 0})
-    },
-
-    addTraveler: function () {
-      this.trip.travelers.push({name: ''})
-    },
+    ...mapActions({
+      addResource: 'addResource',
+      addTraveler: 'addTraveler',
+    }),
 
     create: function () {
-      var total = 0
-
-      this.trip.resources.forEach(resource => { total += resource.price })
-      this.trip.total = total
-      this.trip.individual = total / this.trip.travelers.length
-
-      this.$store.dispatch('createTrip', this.trip)
+      this.$store.dispatch('createTrip')
       this.$router.push('/')
     }
   }

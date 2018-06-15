@@ -6,13 +6,22 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     trips: [],
-    resources: [{name: '', price: 0}],
-    travelers: []
+    trip: {
+      name: 'New',
+      total: 0,
+      individual: 0,
+      resources: [{name: '', price: 0}],
+      travelers: [{name: ''}]
+    }
   },
 
   getters: {
     getTrips (state) {
       return state.trips
+    },
+
+    getTrip (state) {
+      return state.trip
     },
 
     getResources (state) {
@@ -41,41 +50,36 @@ export default new Vuex.Store({
       commit('removeTraveler', traveler.name)
     },
 
-    fetchTrips ({commit}) {
-      const trip = {
-        name: 'Baru',
-        total: 190000,
-        individual: 63000,
-        travelers: [{name: 'jorge'}, {name: 'migue'}, {name: 'wen'}],
-        resources: [{name: 'hotel', price: 130000}, {name: 'gasolina', price: 60000}]
-      }
-      commit('pushTrip', trip)
-    },
-
-    createTrip ({commit}, trip) {
-      commit('pushTrip', trip)
+    createTrip ({commit}) {
+      commit('pushTrip')
     }
   },
 
   mutations: {
     addResource (state) {
-      state.resources.push({name: '', price: 0})
+      state.trip.resources.push({name: '', price: 0})
     },
 
     addTraveler (state) {
-      state.travelers.push({name: ''})
+      state.trip.travelers.push({name: ''})
     },
 
     removeResource (state, resource) {
-      state.resources = state.resources.filter((item) => item.name !== resource)
+      state.trip.resources = state.resources.filter((item) => item.name !== resource)
     },
 
     removeTraveler (state, traveler) {
-      state.travelers = state.travelers.filter((item) => item.name !== traveler)
+      state.trip.travelers = state.travelers.filter((item) => item.name !== traveler)
     },
 
-    pushTrip (state, trip) {
-      state.trips.push(trip)
+    pushTrip (state) {
+      var total = 0
+
+      state.trip.resources.forEach(resource => { total += resource.price })
+      state.trip.total = total
+      state.trip.individual = total / state.trip.travelers.length
+
+      state.trips.push(state.trip)
     }
   }
 })
